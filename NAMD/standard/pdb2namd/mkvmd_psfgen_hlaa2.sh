@@ -1,4 +1,5 @@
 #!/bin/bash
+VMD="/opt/vmd/1.9.3/vmd"
 
 rm -rf chains peptide.p* prot* 
 mkdir chains
@@ -11,7 +12,7 @@ set sel [atomselect top "segname PROC"]
 \$sel writepdb chains/peptide.pdb
 quit
 EOF
-vmd -dispdev text -e tcl 
+$VMD -dispdev text -e tcl 
 
 cat > tcl <<'EOF'
 package require psfgen
@@ -78,7 +79,7 @@ topology top_all36_prot.rtf
   pdbalias atom ASN 1HD2 HD21
   pdbalias atom ASN 2HD2 HD22
 
-segment ANTI { 
+segment PEPT { 
   pdb chains/peptide.pdb
   mutate 1 GLY
   mutate 2 ILE
@@ -92,14 +93,14 @@ segment ANTI {
   first GLYP
   last CTER
   }
-coordpdb chains/peptide.pdb ANTI
+coordpdb chains/peptide.pdb PEPT
 
 guesscoord
 writepsf peptide.psf
 writepdb peptide.pdb
 quit
 EOF
-vmd -dispdev text -e tcl 
+$VMD -dispdev text -e tcl 
 
 cat > tcl <<EOF
 package require topotools
@@ -114,5 +115,5 @@ animate write psf prot.psf \$mol
 animate write pdb prot.pdb \$mol
 quit
 EOF
-vmd -dispdev text -e tcl 
+$VMD -dispdev text -e tcl 
 rm tcl
